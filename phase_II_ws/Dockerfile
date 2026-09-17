@@ -5,6 +5,7 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     python3-opencv \
     python3-numpy \
+    python3-control \
     ros-jazzy-cv-bridge \
     ros-jazzy-geometry-msgs \
     && rm -rf /var/lib/apt/lists/*
