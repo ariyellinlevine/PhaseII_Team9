@@ -113,7 +113,7 @@ class Vision(Node):
                         transform.transform.translation.x = t_world_cam[0][0]
                         transform.transform.translation.y = t_world_cam[1][0]
                         transform.transform.translation.z = t_world_cam[2][0]
-                        
+
                         transform.transform.rotation.x = qx
                         transform.transform.rotation.y = qy
                         transform.transform.rotation.z = qz
