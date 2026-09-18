@@ -59,8 +59,14 @@ class Vision(Node):
         self.dist_coeffs = np.zeros((4, 1), dtype=np.float32)
 
         self.aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
-        self.aruco_params = cv2.aruco.DetectorParameters()
-        self.aruco_detector = cv2.aruco.ArucoDetector(self.aruco_dict, self.aruco_params)
+        if hasattr(cv2.aruco, 'ArucoDetector'):
+            # OpenCV >= 4.7
+            self.aruco_params = cv2.aruco.DetectorParameters()
+            self.aruco_detector = cv2.aruco.ArucoDetector(self.aruco_dict, self.aruco_params)
+        else:
+            # OpenCV < 4.7 (e.g. the python3-opencv apt package on Ubuntu Noble)
+            self.aruco_params = cv2.aruco.DetectorParameters_create()
+            self.aruco_detector = None
 
     def rotation_matrix_to_quaternion(self, rotation_matrix):
         r = R.from_matrix(rotation_matrix)
@@ -72,7 +78,12 @@ class Vision(Node):
             cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
             gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
 
-            corners, ids, rejected = self.aruco_detector.detectMarkers(gray)
+            if self.aruco_detector is not None:
+                corners, ids, rejected = self.aruco_detector.detectMarkers(gray)
+            else:
+                corners, ids, rejected = cv2.aruco.detectMarkers(
+                    gray, self.aruco_dict, parameters=self.aruco_params
+                )
 
             if ids is not None:
                 self.get_logger().info(f'Detected ArUco markers with IDs: {ids.flatten()}')
