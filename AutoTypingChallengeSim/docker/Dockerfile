@@ -30,6 +30,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         python3-yaml \
         python3-aiohttp \
         python3-pytest \
+        python3-opencv \
+        python3-numpy \
+        python3-scipy \
         ros-jazzy-std-msgs \
         ros-jazzy-std-srvs \
         ros-jazzy-sensor-msgs \
