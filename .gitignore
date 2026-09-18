@@ -6,3 +6,6 @@ log/
 __pycache__/
 *.pyc
 .catkin_workspace
+
+docker-compose.override.yml
+
