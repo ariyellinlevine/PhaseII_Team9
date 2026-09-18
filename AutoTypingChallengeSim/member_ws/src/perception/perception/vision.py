@@ -39,6 +39,11 @@ class Vision(Node):
         self._board_q_sum = np.zeros(4)
         self.create_timer(0.02, self.publish_board)
 
+        # The Qt highgui backend only tolerates window calls from one thread, and the executor's
+        # workers vary, so callbacks hand the annotated frame here and main() shows it.
+        self._frame_lock = threading.Lock()
+        self._latest_frame = None
+
         # /sim/launch_key is published when a new sim episode starts, so when the world resets it runs
         self.create_subscription(
             String,
@@ -201,20 +206,42 @@ class Vision(Node):
             else:
                 self.get_logger().info('No ArUco markers detected.')
 
-            cv2.imshow("OpenCV view", cv_image)
-            cv2.waitKey(1)
+            with self._frame_lock:
+                self._latest_frame = cv_image
 
         except CvBridgeError as e:
             self.get_logger().error(f'Error converting ROS Image to OpenCV: {e}')
+
+    def take_frame(self):
+        with self._frame_lock:
+            frame, self._latest_frame = self._latest_frame, None
+        return frame
 
 def main(args=None):
     rclpy.init(args=args)
     vision_node = Vision()
     executor = MultiThreadedExecutor()
     executor.add_node(vision_node)
-    executor.spin()
-    vision_node.destroy_node()
-    rclpy.shutdown()
+
+    def spin():
+        try:
+            executor.spin()
+        except Exception:
+                raise
+    try:
+        try:
+            while rclpy.ok():
+                frame = vision_node.take_frame()
+                if frame is not None:
+                    cv2.imshow("OpenCV view", frame)
+                cv2.waitKey(10)
+        finally:
+            executor.shutdown()
+            vision_node.destroy_node()
+            rclpy.try_shutdown()
+            cv2.destroyAllWindows()
+    except KeyboardInterrupt:
+        pass
 
 if __name__ == '__main__':
     main()
