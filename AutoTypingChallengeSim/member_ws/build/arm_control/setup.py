@@ -1,1 +1,0 @@
-/ws/src/arm_control/setup.py

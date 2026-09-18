@@ -1,2 +1,0 @@
-[console_scripts]
-armcontrol = arm_control.armcontrol:main
