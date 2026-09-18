@@ -6,3 +6,9 @@ log/
 __pycache__/
 *.pyc
 .catkin_workspace
+
+*-backups/
+*.kicad_prl
+~*.lck
+\#auto_saved_files#
+_autosave-*
