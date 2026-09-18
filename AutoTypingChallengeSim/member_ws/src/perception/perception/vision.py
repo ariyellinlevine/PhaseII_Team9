@@ -1,5 +1,6 @@
 import rclpy
 from rclpy.node import Node
+from rclpy.qos import qos_profile_sensor_data
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 import cv2
@@ -14,9 +15,9 @@ class Vision(Node):
         self.bridge = CvBridge()
         self.image_sub = self.create_subscription(
             Image,
-            '/camera/color/image_raw',
+            '/camera/image_raw',
             self.image_callback,
-            10
+            qos_profile_sensor_data
         )
 
         self.tf_broadcaster = tf2_ros.TransformBroadcaster(self)
@@ -130,7 +131,7 @@ class Vision(Node):
                         transform.transform.rotation.z = qz
                         transform.transform.rotation.w = qw
 
-                        self.tf_broadcaster.send_transform(transform)
+                        self.tf_broadcaster.sendTransform(transform)
 
             else:
                 self.get_logger().info('No ArUco markers detected.')

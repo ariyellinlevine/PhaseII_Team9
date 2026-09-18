@@ -31,6 +31,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         python3-aiohttp \
         python3-pytest \
         python3-opencv \
+        ros-jazzy-cv-bridge \
         python3-numpy \
         python3-scipy \
         ros-jazzy-std-msgs \
@@ -105,6 +106,22 @@ RUN . /opt/ros/jazzy/setup.sh \
 # ---------------------------------------------------------------------------
 # TARGET dev — what members receive and work in.
 FROM deps AS dev
+
+# GUI OpenCV, so cv2.imshow can open a window (WSLg / X11; see
+# docker-compose.override.yml). The deps stage installs the headless wheel, which
+# has no highgui backend. The two wheels share one cv2 package directory, so the
+# headless one is removed first. Done here rather than in deps so the sim image
+# stays headless.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        libgl1 libglib2.0-0 libsm6 libxext6 libxrender1 libfontconfig1 \
+        libdbus-1-3 libxkbcommon-x11-0 fonts-dejavu-core \
+        libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 \
+        libxcb-render-util0 libxcb-shape0 libxcb-xinerama0 libxcb-xkb1 \
+    && rm -rf /var/lib/apt/lists/* \
+    && pip3 uninstall -y --break-system-packages opencv-contrib-python-headless \
+    && pip3 install --break-system-packages --no-cache-dir \
+        "numpy<2" \
+        "opencv-contrib-python==4.10.0.84"
 
 # The built install tree only: autotype_msgs message types, autotype_sim for
 # imports, the public assets. No site configuration is copied here and no
