@@ -24,6 +24,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
+            'control = arm_control.control:main',
         ],
     },
 )
