@@ -1,0 +1,12 @@
+# Local, WSL2-only: lets GUI programs in the dev container (cv2.imshow) draw on
+# the Windows desktop through WSLg. Compose merges this into docker-compose.yml
+# automatically. Delete it on a host that is not WSL2.
+services:
+  dev:
+    environment:
+      DISPLAY: ${DISPLAY:-:0}
+      # Qt's MIT-SHM needs a shared IPC namespace with the X server; dev's IPC
+      # is the sim container's, so turn it off.
+      QT_X11_NO_MITSHM: "1"
+    volumes:
+      - /mnt/wslg/.X11-unix:/tmp/.X11-unix
