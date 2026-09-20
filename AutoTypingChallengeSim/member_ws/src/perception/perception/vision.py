@@ -227,7 +227,9 @@ def main(args=None):
         try:
             executor.spin()
         except Exception:
+            if rclpy.ok():
                 raise
+    threading.Thread(target=spin, daemon=True).start()
     try:
         try:
             while rclpy.ok():
