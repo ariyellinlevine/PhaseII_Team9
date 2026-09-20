@@ -2,10 +2,20 @@ import numpy as np
 import rclpy
 from rclpy.node import Node
 import control as ct
+from sensor_msgs import JointState
+from autotype_msgs import JointVelocityCommand
 
 class control(Node):
     def __init__(self):
         super().__init__('control')
+
+        self.joint_State_subsci = self.create_subscription(
+            JointState,
+            'joint_states',
+            self.listener_callback,
+            10)
+
+        self.publisher_ = self.create_publisher(JointVelocityCommand, '/arm/cmd_joint_velocity', 10)
         
         # Define the state-space representation of the system (A, B, C, D matrices)
         A = np.block([
@@ -53,3 +63,5 @@ class control(Node):
         control_out = np.clip(control_out, -self.a_max, self.a_max)
 
         return control_out
+
+    
