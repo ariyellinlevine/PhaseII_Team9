@@ -123,6 +123,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         "numpy<2" \
         "opencv-contrib-python==4.10.0.84"
 
+RUN pip3 install --break-system-packages --no-cache-dir \
+        "numpy<2" \
+        "control==0.10.2"
+
 # The built install tree only: autotype_msgs message types, autotype_sim for
 # imports, the public assets. No site configuration is copied here and no
 # AUTOTYPE_PRIVATE_DIR is set, so the simulator cannot be launched from this
