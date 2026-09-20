@@ -12,3 +12,5 @@ __pycache__/
 ~*.lck
 \#auto_saved_files#
 _autosave-*
+docker-compose.override.yml
+
