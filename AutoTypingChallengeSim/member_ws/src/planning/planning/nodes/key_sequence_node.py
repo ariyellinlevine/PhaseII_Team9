@@ -43,8 +43,7 @@ class KeySequenceNode(Node):
         self.create_service(Trigger, '/planning/type_launch_key', self.start_typing)
 
         self.restart()
-
-    # --- starting and stopping ---
+\
 
     def restart(self):
         """Drop whatever was running and, if asked to, wait for the panel and type the launch key."""
@@ -53,14 +52,17 @@ class KeySequenceNode(Node):
         self.tasks.cancel()
         if self.get_parameter('autostart').value:
             self.tasks.start(self.wait_then_type())
-
+   
     def start_typing(self, request, response):
+         """ service callback to start typing the launch key, one press at a time, waiting for the arm to settle on each key before pressing it."""
         error = self.tasks.start(self.type_launch_key())
         response.success = not error
         response.message = error or f'typing {self.launch_key.value}'
         return response
 
+
     def wait_then_type(self):
+        """Wait for the panel to be known, then type the launch key."""
         yield from hold(self.get_clock(), self.not_ready, PANEL_SETTLE)
         yield from self.type_launch_key()
 
@@ -77,9 +79,10 @@ class KeySequenceNode(Node):
         self.get_logger().info(reason, throttle_duration_sec=5.0)
         return reason
 
-    # --- typing ---
+    
 
     def type_launch_key(self):
+        """ type the launch key, one press at a time, waiting for the arm to settle on each key before pressing it."""
         keys = self.typable_launch_key()
         pressed = 0
         try:
@@ -98,6 +101,7 @@ class KeySequenceNode(Node):
             self.done_pub.publish(Empty())
 
     def typable_launch_key(self):
+        """ Check that the launch key is known, the arm has joint states, and all keys are in the layout."""
         keys = self.launch_key.value
         if keys is None:
             raise TaskError('no launch key received yet')

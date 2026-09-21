@@ -1,4 +1,3 @@
-"""ROS plumbing shared by the nodes: joint states, TF frames, the launch key, messages, main()."""
 import numpy as np
 import rclpy
 import tf2_ros
