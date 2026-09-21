@@ -56,7 +56,8 @@ class control(Node):
         self.sys = ct.ss(A, B, C, D)
 
         # Define the state error weighting matrix (How much to penalize the state error, must be symmetric and positive definite)
-        self.Q = np.diag([10000.0, 10000.0, 10000.0, 10000.0, 10000.0, 2.78, 2.78, 1.56, 1.00, 1.00])
+        self.Q = np.diag([400.0, 400.0, 400.0, 400.0, 400.0, 123.5, 123.5, 69.4, 44.4, 44.4])
+        # Define the control input weighting matrix (How much to penalize the control input, must be symmetric and positive definite)
         self.R = np.diag([0.444, 0.444, 0.250, 0.111, 0.111])
 
         # Max joint acceleration || order: base_yaw, shoulder_pitch, elbow_pitch, head_pan, head_tilt
