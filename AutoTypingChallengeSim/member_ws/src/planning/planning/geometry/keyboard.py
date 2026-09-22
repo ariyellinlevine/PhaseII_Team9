@@ -4,9 +4,6 @@ import numpy as np
 # INTERFACES.md section 6.3: 1u = 19.05 mm. Only the keys a launch key can use (A-Z, 0-9).
 PITCH = 0.01905
 
-# Where the key grid's top-left corner sits on the panel, in metres in the board frame (x right, y down from the
-# panel's top-left corner). INTERFACES.md does not publish this. It was measured from the camera image at the home
-# pose (matching the grid photo to a top-down view of the panel) and came out the same, to 0.1 mm, on every episode.
 KEYBOARD_ORIGIN = [0.0406, 0.0422]
 
 # (top of the row in units, x of the first key in units, keys in order); every one of these keys is 1u wide.

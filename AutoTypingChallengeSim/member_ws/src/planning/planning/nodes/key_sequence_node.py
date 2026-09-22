@@ -27,7 +27,6 @@ class KeySequenceNode(Node):
 
         # [x, y] of the key grid's top-left corner in the board frame, in metres.
         self.declare_parameter('keyboard_origin', KEYBOARD_ORIGIN)
-        self.declare_parameter('finish_episode', False)
         # Start typing on its own once the panel is known, at the first episode and after every reset.
         self.declare_parameter('autostart', False)
 
@@ -43,7 +42,7 @@ class KeySequenceNode(Node):
         self.create_service(Trigger, '/planning/type_launch_key', self.start_typing)
 
         self.restart()
-\
+
 
     def restart(self):
         """Drop whatever was running and, if asked to, wait for the panel and type the launch key."""
@@ -54,7 +53,7 @@ class KeySequenceNode(Node):
             self.tasks.start(self.wait_then_type())
    
     def start_typing(self, request, response):
-         """ service callback to start typing the launch key, one press at a time, waiting for the arm to settle on each key before pressing it."""
+        """Service callback to start typing the launch key, one press at a time, waiting for the arm to settle on each key before pressing it."""
         error = self.tasks.start(self.type_launch_key())
         response.success = not error
         response.message = error or f'typing {self.launch_key.value}'
@@ -97,8 +96,7 @@ class KeySequenceNode(Node):
             raise TaskError(f'stopped after {pressed}/{len(keys)} keys: {err}') from None
 
         self.get_logger().info(f'typed {keys}')
-        if self.get_parameter('finish_episode').value:
-            self.done_pub.publish(Empty())
+        self.done_pub.publish(Empty())
 
     def typable_launch_key(self):
         """ Check that the launch key is known, the arm has joint states, and all keys are in the layout."""
